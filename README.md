@@ -100,7 +100,7 @@ Pour une correction, conserver la preuve du défaut avant modification et le ré
 ## Limites actuelles
 
 - Le jeu et l’API ne sont pas encore implémentés.
-- Le dépôt GitHub est créé et relié au dossier local. Le premier commit et l’envoi des fichiers restent à effectuer.
+- Le dépôt GitHub est créé et relié au dossier local. La documentation initiale est enregistrée dans le commit `2f6631e` et envoyée sur la branche `main`.
 - La publication de l’application n’est pas encore configurée.
 - Aucun comportement sur ordinateur ou smartphone n’est encore vérifié.
 
