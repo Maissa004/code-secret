@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#173e38">
+  <title>Code secret — À vous de décoder</title>
+  <link rel="stylesheet" href="./style.css">
+  <script src="./engine.js" defer></script>
+  <script src="./script.js" defer></script>
+</head>
+<body>
+  <main class="app">
+    <header class="header">
+      <a class="brand" href="./index.html" aria-label="Code secret, accueil"><span class="brand-mark" aria-hidden="true">● ●<br>● ●</span> Atelier de déduction</a>
+      <span class="version">VERSION 0.1</span>
+    </header>
+
+    <section class="intro" aria-labelledby="title">
+      <p class="eyebrow">QUATRE COULEURS. UN MYSTÈRE.</p>
+      <h1 id="title">Code <em>secret.</em></h1>
+      <p>Observez les indices, affinez votre intuition.<br>Vous avez dix essais pour trouver la combinaison.</p>
+    </section>
+
+    <div class="layout">
+      <section class="card game" aria-labelledby="game-title">
+        <div class="section-heading">
+          <h2 id="game-title">À vous de décoder</h2>
+          <span id="attempts" class="counter">0 / 10 essais</span>
+        </div>
+        <div class="secret" aria-label="Code secret : quatre couleurs cachées">
+          <span>?</span><span>?</span><span>?</span><span>?</span>
+        </div>
+        <p class="secret-caption">Le code reste caché. À vous de le déduire.</p>
+
+        <form id="guess-form" novalidate>
+          <fieldset id="guess-fields">
+            <legend>Votre proposition <span id="selection-count">0 / 4</span></legend>
+            <p class="hint" id="selection-help">Choisissez une couleur pour chaque position. Les répétitions sont possibles.</p>
+            <div class="positions" id="positions"></div>
+            <div class="form-actions">
+              <button class="primary" type="submit">Valider la proposition <span aria-hidden="true">↗</span></button>
+              <button class="text-button" id="clear" type="button">Effacer</button>
+            </div>
+          </fieldset>
+        </form>
+        <p id="message" class="message" role="status" aria-live="polite" aria-atomic="true"></p>
+        <button class="restart" id="restart" type="button">↻ &nbsp; Nouvelle partie</button>
+      </section>
+
+      <aside class="card guide" aria-labelledby="rules-title">
+        <p class="eyebrow">LE PRINCIPE</p>
+        <h2 id="rules-title">Un peu de logique,<br>beaucoup de déduction.</h2>
+        <ol class="rules">
+          <li><strong>Composez votre code.</strong><span>Quatre positions, six couleurs. Une même couleur peut apparaître plusieurs fois.</span></li>
+          <li><strong>Lisez les deux indices.</strong><span>Ils donnent des nombres, sans révéler les positions concernées.</span></li>
+          <li><strong>Affinez en dix essais.</strong><span>Quatre bien placées : c’est gagné, même au dernier essai !</span></li>
+        </ol>
+        <div class="index-key"><span class="index-dot exact" aria-hidden="true"></span><div><strong>Bien placée</strong><span>La bonne couleur à la bonne place.</span></div></div>
+        <div class="index-key"><span class="index-dot misplaced" aria-hidden="true"></span><div><strong>Mal placée</strong><span>La bonne couleur, à une autre place.</span></div></div>
+        <p class="note">Chaque occurrence compte une seule fois : les bien placées d’abord, puis les mal placées restantes.</p>
+        <details><summary>Toutes les règles</summary><p>Le code est choisi au hasard parmi rouge, bleu, vert, jaune, orange et violet. Il reste fixe pendant la partie. Une proposition incomplète ou invalide est refusée avec une explication et ne consomme aucun essai. Chaque proposition valide compte pour un essai et reste dans l’historique. Après dix essais sans victoire, la partie est perdue. Après la fin, les propositions sont bloquées. « Nouvelle partie » remet tout à zéro et tire un code au hasard.</p></details>
+      </aside>
+    </div>
+
+    <section class="card history" aria-labelledby="history-title">
+      <div class="section-heading"><h2 id="history-title">Le fil de vos déductions</h2><span class="history-label">HISTORIQUE</span></div>
+      <p id="empty-history" class="empty-history">Chaque essai est un indice de plus.<br><span>Votre première proposition apparaîtra ici.</span></p>
+      <ol id="history" class="history-list"></ol>
+    </section>
+    <footer>Code secret <span aria-hidden="true">·</span> Créé pour apprendre, joué pour réfléchir.</footer>
+    <noscript><p class="card">Activez JavaScript dans votre navigateur pour jouer.</p></noscript>
+  </main>
+</body>
+</html>

@@ -34,26 +34,42 @@ L’annexe du projet fait référence pour les règles. Le contrat 0.2 fait réf
 
 ## Utilisation et accès
 
-État actuel : cadrage du projet, application non créée.
+État actuel : première version locale jouable, version 0.1.
 
-- Lancement local : à compléter lorsque la première version sera disponible.
+- Lancement local : ouvrir `index.html` dans un navigateur (double-clic sur le fichier). Aucune installation ni compilation n’est nécessaire pour jouer.
 - Dépôt GitHub : [Maissa004/code-secret](https://github.com/Maissa004/code-secret).
 - Application publiée : à compléter.
 
-L’interface devra afficher les règles, les essais et les indices. Les couleurs seront aussi identifiables par un nom ou un symbole. Les commandes devront fonctionner au clavier et sur écran tactile.
+L’interface affiche les règles, les essais et les indices. Les noms accompagnent les couleurs. Les sélecteurs natifs sont prévus pour le clavier et le tactile ; leur utilisation réelle reste à vérifier dans les navigateurs ciblés.
+
+### Organisation des fichiers
+
+- `index.html` : structure et textes de la page.
+- `style.css` : apparence et adaptation à la largeur de l’écran.
+- `engine.js` : règles, validation, calcul des indices et état de la partie.
+- `script.js` : sélection des couleurs, affichage et API de test.
+- `tests/engine.test.cjs` : tests automatisés du moteur.
+
+Avec Node.js disponible, lancer les tests depuis le dossier du projet :
+
+```sh
+node --test tests/engine.test.cjs
+```
 
 ## API commune de test
 
-L’application devra respecter le contrat 0.2.
+L’API est implémentée pour le contrat 0.2. Son intégration dans un véritable navigateur et sa conformité sur la version publiée restent à vérifier.
 
-L’ouverture de l’application avec `?test=1` exposera `window.codeSecretTest`, avec les fonctions suivantes :
+L’ouverture de l’application avec `?test=1` expose `window.codeSecretTest`, avec les fonctions suivantes :
 
 - `getConfig()` : lire la configuration.
 - `startGame(options?)` : démarrer ou recommencer une partie, avec un code aléatoire ou imposé pour les tests.
 - `submitGuess(guess)` : envoyer une proposition.
 - `getState()` : lire l’état de la partie.
 
-L’API et l’interface utiliseront le même moteur et la même partie. Sans `?test=1`, l’objet de test ne sera pas exposé.
+L’API et l’interface utilisent le même moteur et la même partie. Sans `?test=1`, l’objet de test n’est pas exposé et une partie aléatoire démarre automatiquement. Avec ce paramètre, le jeu attend un démarrage (`not-started`). Le bouton « Nouvelle partie » permet aussi de démarrer.
+
+Pour l’accès local, ajouter `?test=1` après `index.html` dans l’adresse du navigateur. Le code imposé par `startGame({ secret: [...] })` n’est jamais affiché séparément ni inclus dans l’état retourné.
 
 Le détail des formats, des états et des erreurs est défini dans le contrat 0.2.
 
@@ -65,27 +81,36 @@ Le détail des formats, des états et des erreurs est défini dans le contrat 0.
 - Avancer par petites modifications pour pouvoir comprendre et vérifier chaque étape.
 - Utiliser le même moteur pour l’interface et l’API afin de garantir des règles et des résultats cohérents.
 - Conserver une documentation courte et actualisée.
+- Utiliser HTML, CSS et JavaScript sans framework : aucune compilation n’est nécessaire et les fichiers restent faciles à lire.
+- Séparer le moteur de l’affichage pour vérifier les règles indépendamment et partager une seule partie avec l’API.
+- Choisir quatre listes de couleurs avec des noms visibles, plutôt que des commandes reposant uniquement sur la couleur.
+- Adopter une première apparence crème et vert, avec une disposition sur une colonne sur petit écran.
 
 ### Choix encore ouverts
 
-- Apparence et disposition de l’interface.
-- Manière de sélectionner et de modifier les couleurs.
-- Organisation technique des fichiers.
+- Ajustements de l’interface après les premiers essais de l’étudiant.
+- Validation du confort des sélecteurs sur smartphone.
 
 Les décisions prises avec Codex seront expliquées ici au fur et à mesure.
 
 ## Vérifications
 
-Aucun test du jeu n’a encore été exécuté.
+Version testée : 0.1 (première version du code). Le 14 novembre 2026, les 14 tests automatisés de `tests/engine.test.cjs` ont réussi avec Node.js. Ils portent sur le moteur ; ils ne prouvent pas le rendu ni les interactions dans un navigateur.
 
 | Comportement à vérifier | Résultat attendu | Résultat observé | Statut |
 | --- | --- | --- | --- |
-| Valider seulement trois couleurs pendant une partie | Refus expliqué ; compteur et historique inchangés | Non vérifié | Prévu |
-| Secret rouge, rouge, bleu, vert ; proposition rouge, bleu, rouge, rouge | 1 bien placée et 2 mal placées ; un essai consommé | Non vérifié | Prévu |
-| Trouver le code au dixième essai | Victoire avec dix essais et dix entrées dans l’historique | Non vérifié | Prévu |
-| Envoyer dix propositions valides incorrectes | Défaite au dixième essai | Non vérifié | Prévu |
-| Envoyer une proposition après la fin | Aucun changement des données de la partie | Non vérifié | Prévu |
-| Démarrer une nouvelle partie | Compteur à zéro, historique et indices effacés | Non vérifié | Prévu |
+| Soumettre trois couleurs au moteur pendant une partie | `invalid-length` ; compteur et historique inchangés | Résultat conforme | Réussi, automatisé |
+| Secret rouge, rouge, bleu, vert ; proposition rouge, bleu, rouge, rouge | 1 bien placée et 2 mal placées ; un essai consommé | Résultat conforme | Réussi, automatisé |
+| Les neuf exemples T01 à T09 du contrat | Indices attendus, un essai et une entrée d’historique par cas | Neuf cas conformes | Réussi, automatisé |
+| Trouver le code au dixième essai, après un refus au neuvième | Victoire avec dix essais et dix entrées dans l’historique | Résultat conforme | Réussi, automatisé |
+| Envoyer dix propositions valides incorrectes | Défaite au dixième essai | Résultat conforme | Réussi, automatisé |
+| Envoyer une proposition après la fin | Seul `lastError` change ; données de jeu inchangées | Résultat conforme | Réussi, automatisé |
+| Démarrer une nouvelle partie après victoire ou défaite | Compteur à zéro, historique vide et champs `last…` à null | Résultat conforme | Réussi, automatisé |
+| Démarrage invalide et entrées incorrectes | Erreurs normalisées dans l’ordre prévu ; démarrage invalide sans mutation | Résultat conforme | Réussi, automatisé |
+| Modifier les tableaux fournis et les objets retournés | Aucun changement indirect de l’état interne | Résultat conforme | Réussi, automatisé |
+| Sélectionner trois couleurs et valider dans l’interface | Refus visible ; compteur et historique inchangés | Non vérifié dans un navigateur | Prévu, manuel |
+| Comparer l’API avec l’écran, avec et sans `?test=1` | État cohérent et exposition conditionnelle de l’API | Non vérifié dans un navigateur | Prévu |
+| Jouer au clavier et sur smartphone | Sélection, validation et historique utilisables | Non vérifié | Prévu, manuel |
 
 Pour chaque vérification exécutée, noter :
 
@@ -99,10 +124,12 @@ Pour une correction, conserver la preuve du défaut avant modification et le ré
 
 ## Limites actuelles
 
-- Le jeu et l’API ne sont pas encore implémentés.
+- Le contrôle visuel et les interactions dans un véritable navigateur ne sont pas encore vérifiés : l’outil de navigateur a refusé l’ouverture de l’URL locale `file:`. Les tests Node.js ci-dessus ne remplacent pas ce contrôle.
 - Le dépôt GitHub est créé et relié au dossier local. La documentation initiale est enregistrée dans le commit `2f6631e` et envoyée sur la branche `main`.
 - La publication de l’application n’est pas encore configurée.
-- Aucun comportement sur ordinateur ou smartphone n’est encore vérifié.
+- La conformité complète de l’API dans un navigateur et sur GitHub Pages reste à vérifier.
+- Les essais sur smartphone, au clavier et au tactile restent à effectuer.
+- Aucune correction fonctionnelle avec preuve avant/après n’a encore été documentée ; ne pas en inventer pour le rendu.
 
 ## Jalons
 
