@@ -73,6 +73,36 @@ Pour l’accès local, ajouter `?test=1` après `index.html` dans l’adresse du
 
 Le détail des formats, des états et des erreurs est défini dans le contrat 0.2.
 
+### Essayer l’API dans le navigateur
+
+1. Ouvrir le jeu, ajouter `?test=1` après `index.html` dans la barre d’adresse, puis appuyer sur Entrée : l’adresse se termine par `index.html?test=1`.
+2. Ouvrir les outils de développement avec F12, puis l’onglet **Console**.
+3. Exécuter les commandes suivantes une par une, en attendant le résultat de chacune :
+
+```javascript
+// Vérifier l’accès à l’API : résultat attendu "0.2".
+window.codeSecretTest.version;
+
+// Démarrer une partie avec un code connu pour rendre le test reproductible.
+await window.codeSecretTest.startGame({
+  secret: ["rouge", "rouge", "bleu", "vert"]
+});
+
+// Envoyer une proposition et observer la mise à jour de l’écran.
+await window.codeSecretTest.submitGuess(
+  ["rouge", "bleu", "rouge", "rouge"]
+);
+
+// Relire l’état sans le modifier.
+window.codeSecretTest.getState();
+```
+
+Résultat attendu : `status` vaut `"playing"`, `attempts` vaut `1`, l’historique contient une proposition et `lastResult` vaut `{ wellPlaced: 1, misplaced: 2 }`. `lastError` vaut `null`. L’écran doit afficher le même essai et les mêmes indices : **1 bien placée et 2 mal placées**.
+
+Le paramètre `?test=1` active l’accès à l’API ; il ne lance aucun test automatiquement. Recharger la page sans ce paramètre pour revenir au mode normal. Si l’adresse contient déjà des paramètres, ajouter `&test=1` au lieu d’un second `?`.
+
+Ce scénario est une procédure à exécuter : sa présence dans le README ne constitue pas une preuve de réussite. Noter ensuite le résultat réellement observé, la version et le navigateur utilisés dans les vérifications.
+
 ## Choix du projet
 
 ### Décisions établies
