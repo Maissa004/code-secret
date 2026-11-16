@@ -127,6 +127,20 @@ Les décisions prises avec Codex seront expliquées ici au fur et à mesure.
 
 Version testée : 0.1 (première version du code). Le 14 novembre 2026, les 14 tests automatisés de `tests/engine.test.cjs` ont réussi avec Node.js. Ils portent sur le moteur ; ils ne prouvent pas le rendu ni les interactions dans un navigateur.
 
+### Premiers tests manuels de l’interface
+
+L’étudiant a confirmé dans la conversation que les trois scénarios ci-dessous fonctionnent sur sa version locale 0.1 (code du commit `988a2ab`). Ces résultats sont rapportés par l’étudiant et n’ont pas été reproduits par Codex dans un navigateur. La date exacte d’exécution, le navigateur et l’appareil ne sont pas renseignés.
+
+| Scénario manuel | Résultat attendu | Résultat observé rapporté | Statut |
+| --- | --- | --- | --- |
+| Démarrer une partie, sélectionner seulement trois couleurs et valider | Message de refus ; compteur à 0 et historique vide | Comportement conforme confirmé par l’étudiant | Réussi, manuel |
+| Ajouter la quatrième couleur et valider | Compteur à 1 ; une ligne avec les quatre couleurs et les deux nombres d’indices | Comportement conforme confirmé par l’étudiant | Réussi, manuel |
+| Cliquer sur « Nouvelle partie » après un essai | Compteur à 0 ; historique et sélection effacés | Comportement conforme confirmé par l’étudiant | Réussi, manuel |
+
+Ces essais vérifient les premiers comportements de l’interface. Ils ne valident pas l’exactitude des indices par rapport à un code connu, la conformité de l’API ni l’utilisation sur smartphone. Les tests détaillés de l’API restent **à vérifier**.
+
+### Tests du moteur et vérifications restantes
+
 | Comportement à vérifier | Résultat attendu | Résultat observé | Statut |
 | --- | --- | --- | --- |
 | Soumettre trois couleurs au moteur pendant une partie | `invalid-length` ; compteur et historique inchangés | Résultat conforme | Réussi, automatisé |
@@ -138,7 +152,6 @@ Version testée : 0.1 (première version du code). Le 14 novembre 2026, les 14 t
 | Démarrer une nouvelle partie après victoire ou défaite | Compteur à zéro, historique vide et champs `last…` à null | Résultat conforme | Réussi, automatisé |
 | Démarrage invalide et entrées incorrectes | Erreurs normalisées dans l’ordre prévu ; démarrage invalide sans mutation | Résultat conforme | Réussi, automatisé |
 | Modifier les tableaux fournis et les objets retournés | Aucun changement indirect de l’état interne | Résultat conforme | Réussi, automatisé |
-| Sélectionner trois couleurs et valider dans l’interface | Refus visible ; compteur et historique inchangés | Non vérifié dans un navigateur | Prévu, manuel |
 | Comparer l’API avec l’écran, avec et sans `?test=1` | État cohérent et exposition conditionnelle de l’API | Non vérifié dans un navigateur | Prévu |
 | Jouer au clavier et sur smartphone | Sélection, validation et historique utilisables | Non vérifié | Prévu, manuel |
 
@@ -154,7 +167,7 @@ Pour une correction, conserver la preuve du défaut avant modification et le ré
 
 ## Limites actuelles
 
-- Le contrôle visuel et les interactions dans un véritable navigateur ne sont pas encore vérifiés : l’outil de navigateur a refusé l’ouverture de l’URL locale `file:`. Les tests Node.js ci-dessus ne remplacent pas ce contrôle.
+- Trois premiers tests manuels de l’interface ont été confirmés réussis par l’étudiant ; ils ne constituent pas une vérification complète. Le navigateur et l’appareil utilisés restent à renseigner. Codex n’a pas reproduit ces essais : son outil de navigateur a refusé l’ouverture de l’URL locale `file:`.
 - Le dépôt GitHub est créé et relié au dossier local. La documentation initiale est enregistrée dans le commit `2f6631e` et envoyée sur la branche `main`.
 - La publication de l’application n’est pas encore configurée.
 - La conformité complète de l’API dans un navigateur et sur GitHub Pages reste à vérifier.
