@@ -35,11 +35,13 @@ L’annexe du projet fait référence pour les règles. Le contrat 0.2 fait réf
 
 ## Utilisation et accès
 
-État actuel : version locale 0.2, avec révélation du code après une défaite au dixième essai. La version de l’application est distincte de la version du contrat API (0.2).
+État actuel : version 0.2 envoyée sur GitHub, avec révélation du code après une défaite au dixième essai. La version de l’application est distincte de la version du contrat API (0.2).
 
 - Lancement local : ouvrir `index.html` dans un navigateur (double-clic sur le fichier). Aucune installation ni compilation n’est nécessaire pour jouer.
 - Dépôt GitHub : [Maissa004/code-secret](https://github.com/Maissa004/code-secret).
-- Application publiée : à compléter.
+- Application GitHub Pages : [jouer à Code secret](https://maissa004.github.io/code-secret/).
+
+GitHub Pages publie la racine de la branche `main`. Les prochains envois sur cette branche déclencheront la mise à jour du site. Le tag `jalon-1` identifie la version de remise de J1 ; il n’est pas déplacé lors des modifications suivantes.
 
 L’interface affiche les règles, les essais et les indices. Les noms accompagnent les couleurs. Les sélecteurs natifs sont prévus pour le clavier et le tactile ; leur utilisation réelle reste à vérifier dans les navigateurs ciblés.
 
@@ -148,7 +150,7 @@ Objectif : permettre de comprendre la solution après une défaite, tout en cons
 | Nouvelle partie après défaite | Solution précédente masquée ; historique vide et compteur à zéro | Conforme |
 | API et interface normale | Pas de champ `secret`/`solution` dans l’état, pas de méthode de révélation dans l’API ; validation et remise à zéro préservées | Conforme dans les cas automatisés |
 
-Limites : ces tests contrôlent le moteur et le contenu d’un DOM simulé, pas le rendu visuel, l’accessibilité réelle ou le tactile. Le contrôle dans un navigateur de la nouvelle version reste **à vérifier**. Les essais manuels de la version 0.1 ci-dessous ne valent pas comme validation manuelle de cette évolution.
+Limites : ces tests contrôlent le moteur et le contenu d’un DOM simulé, pas le rendu visuel, l’accessibilité réelle ou le tactile. Le contrôle complet de la révélation dans un navigateur reste **à vérifier** ; le retour de l’étudiant et les contrôles de publication ci-dessous ont une portée limitée. Les essais manuels de la version 0.1 ci-dessous ne valent pas comme validation manuelle de cette évolution.
 
 Pour vérifier rapidement la nouvelle fonction dans le navigateur, ouvrir `index.html?test=1` puis exécuter dans la console :
 
@@ -161,7 +163,22 @@ for (let i = 0; i < 10; i++) {
 }
 ```
 
-Attendu : après le dixième essai, les quatre couleurs **rouge, rouge, bleu, vert** apparaissent en haut, avec leurs noms. Le compteur indique 10/10, les dix lignes d’historique restent visibles et la saisie est désactivée. Cliquer ensuite sur « Nouvelle partie » : les quatre « ? » réapparaissent, le compteur revient à zéro et l’historique se vide. Résultat manuel : **non vérifié**.
+Attendu : après le dixième essai, les quatre couleurs **rouge, rouge, bleu, vert** apparaissent en haut, avec leurs noms. Le compteur indique 10/10, les dix lignes d’historique restent visibles et la saisie est désactivée. Cliquer ensuite sur « Nouvelle partie » : les quatre « ? » réapparaissent, le compteur revient à zéro et l’historique se vide.
+
+Retour manuel du 18 novembre 2026 : l’étudiant confirme que la nouvelle fonctionnalité fonctionne sur sa version locale (code du commit `8812b41`). Le scénario exact, le navigateur et l’appareil ne sont pas renseignés ; cette confirmation ne valide pas à elle seule chaque étape du scénario reproductible ci-dessus.
+
+### Publication GitHub Pages — préparation de J1
+
+Le 18 novembre 2026, le déploiement GitHub Pages du code `8812b41` s’est terminé avec succès. Contrôles effectués par Codex dans le navigateur intégré de l’application, sur l’URL publique :
+
+| Vérification | Attendu | Observé | Statut |
+| --- | --- | --- | --- |
+| Ouvrir le site publié | Page version 0.2, mise en forme et commandes présentes | Page chargée, code caché et compteur à 0/10 ; rendu inspecté | Réussi, navigateur |
+| Choisir rouge, bleu, vert puis valider | Message de refus ; compteur à 0 et historique vide | Message « Choisissez exactement quatre couleurs avant de valider. », 0/10, historique vide | Réussi, navigateur |
+| Ajouter jaune puis valider | Un essai et une entrée d’historique avec les quatre couleurs et les indices | 1/10, ligne rouge/bleu/vert/jaune, indices affichés 0 bien placée et 2 mal placées | Réussi, navigateur |
+| Cliquer sur « Nouvelle partie » | Compteur à 0, historique vide et sélection effacée | Remise à zéro conforme | Réussi, navigateur |
+
+Le code de cette partie était aléatoire : les indices ont été observés, mais leur exactitude n’a pas été validée avec un secret imposé. Ces essais ne couvrent ni la conformité complète de l’API, ni la révélation après dix essais, ni un smartphone réel. La version du logiciel de navigation n’a pas été relevée. Le tag `jalon-1` conserve ce même code avec la documentation de remise actualisée.
 
 ### Historique des vérifications de la version 0.1
 
@@ -207,9 +224,9 @@ Pour une correction, conserver la preuve du défaut avant modification et le ré
 
 ## Limites actuelles
 
-- Trois premiers tests manuels de l’interface ont été confirmés réussis par l’étudiant ; ils ne constituent pas une vérification complète. Le navigateur et l’appareil utilisés restent à renseigner. Codex n’a pas reproduit ces essais : son outil de navigateur a refusé l’ouverture de l’URL locale `file:`.
+- Les premiers essais locaux sont rapportés par l’étudiant, sans indication du navigateur et de l’appareil. Codex a ensuite vérifié les trois comportements de base sur la version publiée, comme détaillé ci-dessus. Cela ne constitue pas une vérification complète.
 - Le dépôt GitHub est créé et relié au dossier local. La documentation initiale est enregistrée dans le commit `2f6631e` et envoyée sur la branche `main`.
-- La publication de l’application n’est pas encore configurée.
+- GitHub Pages est configuré sur `main` à la racine du dépôt.
 - La conformité complète de l’API dans un navigateur et sur GitHub Pages reste à vérifier.
 - Les essais sur smartphone, au clavier et au tactile restent à effectuer.
 - Aucune correction fonctionnelle avec preuve avant/après n’a encore été documentée ; ne pas en inventer pour le rendu.
@@ -217,6 +234,8 @@ Pour une correction, conserver la preuve du défaut avant modification et le ré
 ## Jalons
 
 ### J1 — 20 novembre 2026
+
+Version préparée le 18 novembre 2026 : application 0.2, repérée par le tag Git `jalon-1`. Les liens du dépôt et de l’application figurent dans « Utilisation et accès ». Les 19 tests automatisés ont été relancés et passent (0 échec) avant publication. Les limites restantes sont conservées ci-dessus, notamment l’absence de correction d’un défaut réel documentée avant/après. La création du tag ne certifie pas à elle seule que toutes les exigences pédagogiques sont remplies. La remise sur Cyberlearn reste à effectuer par l’étudiant.
 
 - Première version publiée et vérifiée, éventuellement incomplète.
 - Liens du dépôt et de l’application.
