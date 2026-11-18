@@ -21,8 +21,10 @@ h1 em { color: #61836a; font-weight: 400; }
 .section-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 h2 { font-size: 18px; font-weight: 650; line-height: 1.4; margin: 0; }
 .counter { white-space: nowrap; background: #eaf0e8; color: var(--ink); padding: 5px 12px; border-radius: 30px; font-size: 12px; font-variant-numeric: tabular-nums; }
-.secret { display: flex; justify-content: center; gap: 18px; background: #f1f2eb; border: 1px dashed #d0d7cb; border-radius: 12px; padding: 20px 8px; margin-top: 25px; }
-.secret span { height: 40px; width: 40px; background: #e2e6dc; border-radius: 50%; text-align: center; line-height: 40px; color: #7c8a78; font-family: Georgia, serif; font-size: 24px; }
+.secret { display: flex; justify-content: center; gap: clamp(6px, 2vw, 18px); background: #f1f2eb; border: 1px dashed #d0d7cb; border-radius: 12px; padding: 20px 8px; margin-top: 25px; }
+.secret > span { height: 40px; width: 40px; background: #e2e6dc; border-radius: 50%; text-align: center; line-height: 40px; color: #7c8a78; font-family: Georgia, serif; font-size: 24px; }
+.solution-color { display: flex; flex-direction: column; align-items: center; gap: 6px; min-width: 0; }
+.solution-name { font-size: 11px; color: var(--ink); }
 .secret-caption { font-size: 11px; text-align: center; color: var(--muted); margin: 8px 0 24px; }
 fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
 legend { width: 100%; font-size: 13px; font-weight: 650; }

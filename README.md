@@ -29,12 +29,13 @@ L’annexe du projet fait référence pour les règles. Le contrat 0.2 fait réf
 - Les couleurs bien placées sont comptées en premier. Chaque occurrence ne compte qu’une fois.
 - Quatre couleurs bien placées donnent la victoire, même au dixième essai.
 - Après dix essais sans victoire, la partie est perdue.
+- Après cette défaite uniquement, le code secret est révélé avec les couleurs et leurs noms. Une nouvelle partie masque la solution précédente.
 - Après la fin, aucune proposition ne modifie la partie.
 - Une nouvelle partie choisit un code au hasard et remet à zéro les essais, l’historique et les indices. Le même code peut être tiré à nouveau par hasard.
 
 ## Utilisation et accès
 
-État actuel : première version locale jouable, version 0.1.
+État actuel : version locale 0.2, avec révélation du code après une défaite au dixième essai. La version de l’application est distincte de la version du contrat API (0.2).
 
 - Lancement local : ouvrir `index.html` dans un navigateur (double-clic sur le fichier). Aucune installation ni compilation n’est nécessaire pour jouer.
 - Dépôt GitHub : [Maissa004/code-secret](https://github.com/Maissa004/code-secret).
@@ -49,11 +50,12 @@ L’interface affiche les règles, les essais et les indices. Les noms accompagn
 - `engine.js` : règles, validation, calcul des indices et état de la partie.
 - `script.js` : sélection des couleurs, affichage et API de test.
 - `tests/engine.test.cjs` : tests automatisés du moteur.
+- `tests/interface.test.cjs` : tests de l’interface et de son lien avec l’API en DOM simulé (sans rendu de navigateur).
 
 Avec Node.js disponible, lancer les tests depuis le dossier du projet :
 
 ```sh
-node --test tests/engine.test.cjs
+node --test tests/engine.test.cjs tests/interface.test.cjs
 ```
 
 ## API commune de test
@@ -69,7 +71,9 @@ L’ouverture de l’application avec `?test=1` expose `window.codeSecretTest`, 
 
 L’API et l’interface utilisent le même moteur et la même partie. Sans `?test=1`, l’objet de test n’est pas exposé et une partie aléatoire démarre automatiquement. Avec ce paramètre, le jeu attend un démarrage (`not-started`). Le bouton « Nouvelle partie » permet aussi de démarrer.
 
-Pour l’accès local, ajouter `?test=1` après `index.html` dans l’adresse du navigateur. Le code imposé par `startGame({ secret: [...] })` n’est jamais affiché séparément ni inclus dans l’état retourné.
+Pour l’accès local, ajouter `?test=1` après `index.html` dans l’adresse du navigateur. Le code imposé par `startGame({ secret: [...] })` reste caché pendant la partie et n’est jamais inclus dans l’état retourné. Il apparaît dans l’interface uniquement après une défaite, conformément à l’évolution autorisée par le professeur et rapportée par l’étudiant le 18 novembre 2026.
+
+Cette autorisation fait évoluer le comportement visuel par rapport au contrat écrit initial qui excluait la révélation indépendante du code. Les quatre méthodes et le format des états de l’API restent inchangés : aucun champ `secret` ou `solution`, ni méthode de révélation, n’est ajouté à `window.codeSecretTest`. La compatibilité avec l’outil de test du professeur reste à vérifier ; ne pas annoncer une conformité complète sur la seule base des tests locaux.
 
 Le détail des formats, des états et des erreurs est défini dans le contrat 0.2.
 
@@ -115,6 +119,7 @@ Ce scénario est une procédure à exécuter : sa présence dans le README ne co
 - Séparer le moteur de l’affichage pour vérifier les règles indépendamment et partager une seule partie avec l’API.
 - Choisir quatre listes de couleurs avec des noms visibles, plutôt que des commandes reposant uniquement sur la couleur.
 - Adopter une première apparence crème et vert, avec une disposition sur une colonne sur petit écran.
+- Afficher automatiquement la solution uniquement après une défaite au dixième essai, selon l’accord du professeur rapporté par l’étudiant le 18 novembre 2026. Les indices, les dix essais et la priorité à la victoire restent inchangés.
 
 ### Choix encore ouverts
 
@@ -124,6 +129,41 @@ Ce scénario est une procédure à exécuter : sa présence dans le README ne co
 Les décisions prises avec Codex seront expliquées ici au fur et à mesure.
 
 ## Vérifications
+
+### Version 0.2 — révélation après défaite (18 novembre 2026)
+
+Objectif : permettre de comprendre la solution après une défaite, tout en conservant les comportements déjà fonctionnels.
+
+- Avant modification fonctionnelle : les 14 tests d’origine passent sur le code de la version 0.1 (dernier commit de documentation : `c624846`). Les deux nouveaux tests du moteur échouent ensuite, car la fonction de révélation n’existe pas encore.
+- Après modification : les 14 tests d’origine sont conservés sans changement et passent toujours. Deux nouveaux tests du moteur et trois tests de l’interface en DOM simulé passent également, soit **19 tests réussis, 0 échec**, avec Node.js.
+- Il s’agit d’une évolution autorisée, pas d’une correction d’un défaut préexistant. Cette comparaison avant/après ne doit pas être présentée comme une correction pour le rendu.
+
+| Vérification automatisée | Résultat attendu | Résultat observé |
+| --- | --- | --- |
+| Avant le démarrage et jusqu’au neuvième essai, y compris après un refus | Solution indisponible pour l’affichage ; quatre « ? » dans le DOM simulé | Conforme |
+| Dix propositions valides incorrectes | État `lost`, dix essais et dix entrées d’historique ; code exact dans l’ordre avec ses noms dans le DOM simulé | Conforme |
+| Nouvelle proposition après défaite | Refus `game-finished` ; historique et code révélé inchangés | Conforme pour le moteur |
+| Modifier la copie du code révélé | Aucune modification du code interne | Conforme |
+| Victoire au dixième essai | État `won`, message de victoire et aucune révélation de défaite | Conforme |
+| Nouvelle partie après défaite | Solution précédente masquée ; historique vide et compteur à zéro | Conforme |
+| API et interface normale | Pas de champ `secret`/`solution` dans l’état, pas de méthode de révélation dans l’API ; validation et remise à zéro préservées | Conforme dans les cas automatisés |
+
+Limites : ces tests contrôlent le moteur et le contenu d’un DOM simulé, pas le rendu visuel, l’accessibilité réelle ou le tactile. Le contrôle dans un navigateur de la nouvelle version reste **à vérifier**. Les essais manuels de la version 0.1 ci-dessous ne valent pas comme validation manuelle de cette évolution.
+
+Pour vérifier rapidement la nouvelle fonction dans le navigateur, ouvrir `index.html?test=1` puis exécuter dans la console :
+
+```javascript
+await window.codeSecretTest.startGame({
+  secret: ["rouge", "rouge", "bleu", "vert"]
+});
+for (let i = 0; i < 10; i++) {
+  await window.codeSecretTest.submitGuess(["jaune", "jaune", "jaune", "jaune"]);
+}
+```
+
+Attendu : après le dixième essai, les quatre couleurs **rouge, rouge, bleu, vert** apparaissent en haut, avec leurs noms. Le compteur indique 10/10, les dix lignes d’historique restent visibles et la saisie est désactivée. Cliquer ensuite sur « Nouvelle partie » : les quatre « ? » réapparaissent, le compteur revient à zéro et l’historique se vide. Résultat manuel : **non vérifié**.
+
+### Historique des vérifications de la version 0.1
 
 Version testée : 0.1 (première version du code). Le 14 novembre 2026, les 14 tests automatisés de `tests/engine.test.cjs` ont réussi avec Node.js. Ils portent sur le moteur ; ils ne prouvent pas le rendu ni les interactions dans un navigateur.
 

@@ -77,3 +77,40 @@ test('Isolation des tableaux entrants, états et configuration retournés', () =
   assert.deepEqual(game.getConfig().colors,[R,B,V,J,O,Vi]);
   assert.equal('secret' in game.getState(),false);
 });
+
+test('Révélation uniquement après dix essais valides perdus, sans modifier la partie', () => {
+  const game = createGame();
+  assert.equal(game.getRevealedSecret(), null);
+  game.startGame({secret: repeated});
+  for (let i = 0; i < 9; i++) {
+    assert.equal(game.getRevealedSecret(), null);
+    game.submitGuess([J,J,J,J]);
+  }
+  game.submitGuess([R]); // Un refus au neuvième ne déclenche pas la révélation.
+  assert.equal(game.getRevealedSecret(), null);
+  game.submitGuess([J,J,J,J]);
+  const before = game.getState();
+  const revealed = game.getRevealedSecret();
+  assert.deepEqual(revealed, repeated);
+  revealed.fill(B); // Le code renvoyé ne permet pas de modifier le moteur.
+  assert.deepEqual(game.getRevealedSecret(), repeated);
+  assert.deepEqual(game.getState(), before);
+  assert.equal('secret' in before, false);
+  assert.equal('solution' in before, false);
+  game.submitGuess(null);
+  assert.equal(game.getState().lastError.code, 'game-finished');
+  assert.deepEqual(game.getRevealedSecret(), repeated);
+  assert.equal(game.getState().attempts, 10);
+  assert.equal(game.getState().history.length, 10);
+  assert.throws(() => game.startGame({secret: [R]}));
+  assert.deepEqual(game.getRevealedSecret(), repeated);
+  game.startGame({secret: common});
+  assert.equal(game.getRevealedSecret(), null);
+});
+
+test('Une victoire au dixième reste une victoire et ne déclenche pas la révélation de défaite', () => {
+  const game = createGame(); game.startGame({secret: repeated});
+  for (let i = 0; i < 9; i++) game.submitGuess([J,J,J,J]);
+  assert.equal(game.submitGuess(repeated).status, 'won');
+  assert.equal(game.getRevealedSecret(), null);
+});

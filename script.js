@@ -46,6 +46,31 @@
 
   function render() {
     const state = game.getState();
+    const revealed = game.getRevealedSecret();
+    const secretDisplay = document.querySelector("#secret-display");
+    secretDisplay.replaceChildren();
+    if (revealed) {
+      revealed.forEach((color) => {
+        const item = document.createElement("div");
+        item.className = "solution-color";
+        const peg = document.createElement("span");
+        peg.className = `peg ${color}`;
+        peg.setAttribute("aria-hidden", "true");
+        const name = document.createElement("span");
+        name.className = "solution-name";
+        name.textContent = color;
+        item.append(peg, name);
+        secretDisplay.append(item);
+      });
+    } else {
+      for (let i = 0; i < 4; i++) {
+        const hidden = document.createElement("span");
+        hidden.textContent = "?";
+        secretDisplay.append(hidden);
+      }
+    }
+    secretDisplay.setAttribute("aria-label", revealed ? `Le code secret était : ${revealed.join(", ")}` : "Code secret : quatre couleurs cachées");
+    document.querySelector("#secret-caption").textContent = revealed ? "Voici le code qu’il fallait trouver." : "Le code reste caché. À vous de le déduire.";
     fields.disabled = state.status !== "playing";
     document.querySelector("#attempts").textContent = `${state.attempts} / 10 essais`;
     document.querySelector("#empty-history").hidden = state.history.length > 0;
@@ -86,7 +111,7 @@
       "not-started": "Prêt à jouer ? Cliquez sur « Nouvelle partie ».",
       playing: state.attempts ? "À vous de jouer : appuyez-vous sur les indices précédents." : "La partie commence. Quelle est votre première intuition ?",
       won: `Bravo ! Vous avez trouvé le code en ${state.attempts} essai(s).`,
-      lost: "Les dix essais sont épuisés. Retentez votre chance avec une nouvelle partie !"
+      lost: "Les dix essais sont épuisés. Le code secret est révélé ci-dessus. Retentez votre chance avec une nouvelle partie !"
     };
     message.textContent = state.lastError ? state.lastError.message : statusMessages[state.status];
   }

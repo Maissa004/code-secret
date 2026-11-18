@@ -51,6 +51,8 @@
     let secret = [];
     let state = { status: "not-started", attempts: 0, history: [], lastGuess: null, lastResult: null, lastError: null };
     const getState = () => copy(state);
+    // Réservé à l’affichage après défaite ; absent de l’API commune de test.
+    const getRevealedSecret = () => state.status === "lost" ? [...secret] : null;
     const getConfig = () => ({ apiVersion: "0.2", rulesVersion: "code-couleurs-1.0", secretLength: 4, maxAttempts: 10, allowDuplicates: true, colors: [...COLORS] });
 
     function startGame(options = {}) {
@@ -82,7 +84,7 @@
       state.status = result.wellPlaced === 4 ? "won" : state.attempts === 10 ? "lost" : "playing";
       return getState();
     }
-    return { getConfig, startGame, submitGuess, getState };
+    return { getConfig, startGame, submitGuess, getState, getRevealedSecret };
   }
 
   if (typeof module !== "undefined" && module.exports) module.exports = { createGame };
