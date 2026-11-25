@@ -35,7 +35,7 @@ L’annexe du projet fait référence pour les règles. Le contrat 0.2 fait réf
 
 ## Utilisation et accès
 
-État actuel : version 0.4 avec PWA, préparée le 25 novembre 2026 après la version 0.3 publiée. Le design lilas/violet et la palette commune sont conservés. La version 0.2 publiée pour `jalon-1` reste identifiable dans Git. La version de l’application est distincte de la version du contrat API (0.2).
+État actuel : version 0.4 avec PWA, publiée sur GitHub Pages le 25 novembre 2026 (code PWA `698ce4b`). Le design lilas/violet et la palette commune sont conservés. La version 0.2 publiée pour `jalon-1` reste identifiable dans Git. La version de l’application est distincte de la version du contrat API (0.2).
 
 - Lancement local : ouvrir `index.html` dans un navigateur (double-clic sur le fichier). Aucune installation ni compilation n’est nécessaire pour jouer.
 - Dépôt GitHub : [Maissa004/code-secret](https://github.com/Maissa004/code-secret).
@@ -84,6 +84,7 @@ Documentation technique utilisée : [manifeste web](https://web.dev/learn/pwa/we
 - `tests/interface.test.cjs` : tests de l’interface et de son lien avec l’API en DOM simulé (sans rendu de navigateur).
 - `tests/pwa.test.cjs` : manifeste, icônes et comportement du cache en environnement simulé.
 - `tests/pwa-browser.cjs` : scénario optionnel dans Edge automatisé avec un profil temporaire, si Playwright et Edge sont disponibles.
+- `tests/pwa-published.cjs` : contrôle volontaire du site HTTPS publié (installabilité, API et rechargement hors ligne), avec les mêmes outils et un profil temporaire.
 
 Avec Node.js disponible, lancer les tests depuis le dossier du projet :
 
@@ -189,7 +190,14 @@ Limites : la détection d’installabilité n’est pas une installation native 
 
 **Maintenance :** incrémenter `APP_VERSION` dans `service-worker.js` à chaque changement d’un fichier précaché et actualiser `APP_FILES` si nécessaire. Sans cela, les joueurs ayant déjà le cache pourraient garder les anciens fichiers. Garder le nom `service-worker.js`. La liste ne contient ni README, ni conversations, ni état de partie.
 
-Publication de cette version : à vérifier après envoi sur GitHub ; ne pas confondre les résultats de navigateur local ci-dessus avec une validation du site public.
+**Publication vérifiée :** le [déploiement de `698ce4b`](https://github.com/Maissa004/code-secret/actions/runs/45694251455) s’est terminé avec succès. Le scénario `node tests/pwa-published.cjs` a ensuite été exécuté sur `https://maissa004.github.io/code-secret/` dans Edge 158.0.4370.33 :
+
+- page `VERSION 0.4`, service worker actif avec la portée exacte `/code-secret/` et cache prêt ;
+- aucun blocage d’installabilité signalé par Edge ;
+- mode API en ligne : secret imposé rouge/rouge/bleu/vert puis proposition rouge/bleu/rouge/rouge, avec 1 bien placée, 2 mal placées et 1 essai à l’écran ;
+- après passage du navigateur de test hors ligne, rechargement de la page publiée réussi et proposition valide acceptée (1 essai et une entrée d’historique).
+
+Ces contrôles publics ont réussi. L’installation native sur le bureau n’a pas été effectuée par Codex ; le cycle de mise à jour entre deux véritables publications reste à vérifier. Le test public peut être relancé volontairement avec Playwright et Edge disponibles ; il ne modifie pas le dépôt ni une partie de l’étudiant.
 
 ### Retour manuel sur l’API — version publiée 0.3 (25 novembre 2026)
 

@@ -45,6 +45,7 @@
 - Relancer `node --test tests/engine.test.cjs tests/interface.test.cjs tests/pwa.test.cjs` avant publication d’une modification de l’application.
 - Vérifier la sélection, la correction d’une position, le refus d’une proposition incomplète et un cas valide. Distinguer les tests du moteur, le DOM simulé et les essais réels dans un navigateur.
 - Pour un changement PWA, exécuter aussi `tests/pwa-browser.cjs` si Playwright et Edge sont disponibles ; sinon signaler les scénarios de navigateur non vérifiés.
+- Après une publication PWA, utiliser `tests/pwa-published.cjs` pour contrôler la version HTTPS, l’API et le hors-ligne si ces outils sont disponibles.
 
 ## Maintenir la PWA
 
