@@ -70,7 +70,7 @@ node --test tests/engine.test.cjs tests/interface.test.cjs
 
 ## API commune de test
 
-L’API est implémentée pour le contrat 0.2. Son intégration dans un véritable navigateur et sa conformité sur la version publiée restent à vérifier.
+L’API est implémentée pour le contrat 0.2. Des premiers scénarios manuels sur la version publiée 0.3 sont rapportés comme fonctionnels par l’étudiant (voir « Retour manuel sur l’API »). Sa conformité complète reste à vérifier.
 
 L’ouverture de l’application avec `?test=1` expose `window.codeSecretTest`, avec les fonctions suivantes :
 
@@ -142,6 +142,22 @@ Les décisions prises avec Codex seront expliquées ici au fur et à mesure.
 
 ## Vérifications
 
+### Retour manuel sur l’API — version publiée 0.3 (25 novembre 2026)
+
+L’étudiant rapporte que les scénarios API proposés dans la conversation semblent fonctionner avec le nouveau design. Version visée : application 0.3 publiée depuis `main` (code du design `9216766`, dernière publication documentée `7140176`, qui ne change que la documentation). URL utilisée pour les essais proposés : [mode test API](https://maissa004.github.io/code-secret/?test=1).
+
+Type : **tests manuels rapportés par l’étudiant**, sans nouvelle exécution par Codex. Le navigateur, sa version, l’appareil et les valeurs détaillées retournées par la console ne sont pas renseignés. La confirmation est globale, pas un relevé individuel de chaque commande.
+
+| Scénario proposé | Résultat attendu | Résultat observé rapporté | Statut |
+| --- | --- | --- | --- |
+| `startGame` avec le secret rouge, rouge, bleu, vert | Partie en cours, 0 essai et historique vide | Retour global de fonctionnement ; état exact non fourni | Fonctionnel selon l’étudiant, détail non relevé |
+| `submitGuess` avec rouge, bleu, rouge, rouge | 1 essai ; 1 bien placée et 2 mal placées | Retour global de fonctionnement ; valeurs exactes non fournies | Fonctionnel selon l’étudiant, détail non relevé |
+| `submitGuess` avec seulement rouge, bleu, vert | Refus `invalid-length` ; compteur à 1 et historique inchangé | Retour global de fonctionnement ; erreur et compteur non relevés individuellement | Fonctionnel selon l’étudiant, détail non relevé |
+| `submitGuess` avec rouge, rouge, bleu, vert après les étapes précédentes | Victoire en 2 essais ; 4 bien placées et 0 mal placée | Retour global de fonctionnement ; état exact non fourni | Fonctionnel selon l’étudiant, détail non relevé |
+| Lire `getState()` | État consultable sans jouer de coup ; après cette séquence, `status` à `won` et `attempts` à 2 | Utilité de la commande expliquée ; résultat de lecture non communiqué séparément | Exécution individuelle non confirmée |
+
+Portée : ce retour complète les 21 tests automatisés existants et apporte une première confirmation manuelle de fonctionnement. Il ne constitue pas une preuve de conformité de toute l’API. Restent notamment à documenter : les résultats détaillés, les erreurs et priorités restantes, l’absence de l’API sans `?test=1`, ainsi que les essais clavier et smartphone. La PWA sera traitée dans une étape suivante ; aucun fichier du jeu n’est changé à l’occasion de cette mise à jour documentaire.
+
 ### Version 0.3 — design et palette commune (25 novembre 2026)
 
 Changement d’interface demandé après validation d’une maquette. Le moteur `engine.js`, le calcul des indices, la limite de dix essais et les méthodes de l’API ne sont pas modifiés. Le tag `jalon-1` est conservé.
@@ -171,7 +187,7 @@ Limite : l’outil de navigateur n’a pas pu démarrer lors de la réalisation 
 - L’URL `https://maissa004.github.io/code-secret/?test=1` répond en HTTP 200. Ce contrôle HTTP ne vérifie pas l’exécution de l’API ni les interactions dans un navigateur. Les limites de validation manuelle décrites ci-dessus restent applicables.
 - Le tag `jalon-1` reste sur la version de remise et n’est pas déplacé.
 
-Essai manuel prévu : ouvrir `index.html`, choisir trois pastilles puis valider (refus sans essai), ajouter la quatrième (un essai), corriger une position avant une autre validation, puis utiliser « Nouvelle partie ». Refaire la sélection avec Tab et Entrée/Espace, et vérifier la disposition sur téléphone. Rejouer le scénario API à code imposé décrit ci-dessous pour contrôler le résultat 1 bien placée / 2 mal placées. Résultats de ces nouveaux essais manuels : **à renseigner**.
+Essais manuels de la palette restant à documenter : ouvrir `index.html`, choisir trois pastilles puis valider (refus sans essai), ajouter la quatrième (un essai), corriger une position avant une autre validation, puis utiliser « Nouvelle partie ». Refaire la sélection avec Tab et Entrée/Espace, et vérifier la disposition sur téléphone. Le scénario API à code imposé a fait l’objet du retour global de l’étudiant consigné ci-dessus ; les résultats détaillés restent à relever.
 
 ### Version 0.2 — révélation après défaite (18 novembre 2026)
 
