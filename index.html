@@ -7,15 +7,27 @@
   <title>Code secret — À vous de décoder</title>
   <link rel="stylesheet" href="./style.css">
   <link rel="icon" type="image/svg+xml" href="./planet.svg">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./icons/planet-180.png">
   <script src="./engine.js" defer></script>
   <script src="./script.js" defer></script>
+  <script src="./pwa.js" defer></script>
 </head>
 <body>
   <main class="app">
     <header class="header">
       <a class="brand" href="./index.html" aria-label="Code secret, accueil"><img class="brand-mark" src="./planet.svg" alt="" width="56" height="42"> Code secret</a>
-      <span class="version">VERSION 0.3</span>
+      <span class="version">VERSION 0.4</span>
     </header>
+
+    <div class="app-tools">
+      <p id="pwa-status" class="pwa-status" role="status" aria-live="polite"></p>
+      <button id="install-app" class="text-button" type="button" hidden>Installer le jeu</button>
+    </div>
+    <div id="app-update" class="app-update" role="status" hidden>
+      <p>Une nouvelle version est disponible. La mise à jour recharge le jeu et recommence la partie ; vous pouvez aussi terminer celle-ci avant de cliquer.</p>
+      <button id="update-app" class="text-button" type="button">Mettre à jour</button>
+    </div>
 
     <section class="intro" aria-labelledby="title">
       <p class="eyebrow">QUATRE COULEURS. UN MYSTÈRE.</p>

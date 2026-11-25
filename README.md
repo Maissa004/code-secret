@@ -35,7 +35,7 @@ L’annexe du projet fait référence pour les règles. Le contrat 0.2 fait réf
 
 ## Utilisation et accès
 
-État actuel : version 0.3 publiée sur GitHub Pages le 25 novembre 2026, avec palette commune cliquable et nouveau design lilas/violet. Le code du design est enregistré dans le commit `9216766`. La version 0.2 publiée pour `jalon-1` reste identifiable dans Git. La version de l’application est distincte de la version du contrat API (0.2).
+État actuel : version 0.4 avec PWA, préparée le 25 novembre 2026 après la version 0.3 publiée. Le design lilas/violet et la palette commune sont conservés. La version 0.2 publiée pour `jalon-1` reste identifiable dans Git. La version de l’application est distincte de la version du contrat API (0.2).
 
 - Lancement local : ouvrir `index.html` dans un navigateur (double-clic sur le fichier). Aucune installation ni compilation n’est nécessaire pour jouer.
 - Dépôt GitHub : [Maissa004/code-secret](https://github.com/Maissa004/code-secret).
@@ -52,6 +52,23 @@ L’interface affiche les règles, les essais et les indices. Les noms accompagn
 
 Les boutons natifs s’utilisent aussi avec Tab, puis Entrée ou Espace. Sur ordinateur, l’historique est à droite du jeu et les règles en dessous. Sur petit écran, l’ordre est jeu, historique, règles. Le rendu et le confort sur appareils réels restent à vérifier pour cette version.
 
+### Installer et utiliser la PWA
+
+1. Ouvrir [le jeu en ligne](https://maissa004.github.io/code-secret/) dans Edge, en mode normal (sans `?test=1`). Attendre le message **« Le jeu est prêt à être utilisé hors connexion. »** après la première visite avec connexion.
+2. Cliquer sur **« Installer le jeu »** quand Edge propose cette action, puis confirmer dans la fenêtre du navigateur. L’icône représente la planète bleue sur fond lilas. L’installation reste un choix du joueur ; le jeu fonctionne aussi dans un onglet.
+3. Ouvrir l’application depuis son icône. Le manifeste prévoit une fenêtre dédiée, sans les commandes habituelles d’un onglet.
+4. Après préparation du cache, le mode normal peut être rechargé et joué sans connexion. Une première visite entièrement hors ligne ne peut pas télécharger le jeu.
+
+L’installation et le hors-ligne nécessitent une origine sécurisée (HTTPS sur GitHub Pages ou serveur local de développement sur localhost). Le double-clic sur `index.html` reste possible pour jouer, mais n’active pas la PWA. Si le bouton d’installation n’apparaît pas, vérifier que le site est ouvert en ligne, hors navigation privée, et que l’application n’est pas déjà installée ; sa disponibilité dépend du navigateur.
+
+**Mises à jour :** lorsqu’une nouvelle version est téléchargée, un bandeau propose **« Mettre à jour »**. Il ne recharge pas automatiquement une partie en cours. Le clic active la nouvelle version et recharge le jeu : la partie recommence. Il est possible de terminer sa partie avant de cliquer. Les anciens caches de ce projet sont ensuite supprimés ; les caches d’autres sites ou projets ne sont pas touchés.
+
+**Parties :** seuls les fichiers publics de l’application sont mis en cache. Le code secret et l’historique restent en mémoire, sans sauvegarde persistante ; fermer ou recharger le jeu démarre une nouvelle partie.
+
+**API :** ouvrir [le mode test](https://maissa004.github.io/code-secret/?test=1) avec une connexion. Ce mode ne prépare pas la PWA et contourne le cache du jeu, y compris pour ses ressources, afin d’utiliser la version réseau. Il n’est pas disponible hors connexion. Les quatre fonctions et le moteur du jeu restent inchangés.
+
+Documentation technique utilisée : [manifeste web](https://web.dev/learn/pwa/web-app-manifest), [service workers](https://web.dev/learn/pwa/service-workers) et [mises à jour](https://web.dev/learn/pwa/update).
+
 ### Organisation des fichiers
 
 - `index.html` : structure et textes de la page.
@@ -59,14 +76,22 @@ Les boutons natifs s’utilisent aussi avec Tab, puis Entrée ou Espace. Sur ord
 - `engine.js` : règles, validation, calcul des indices et état de la partie.
 - `script.js` : sélection des couleurs, affichage et API de test.
 - `planet.svg` : petit logo de planète bleue avec anneau, utilisé aussi comme icône d’onglet.
+- `manifest.webmanifest` : nom, icônes, couleurs, portée et lancement de la PWA.
+- `icons/` : déclinaisons PNG du logo existant (192, 512 et 180 pixels).
+- `pwa.js` : proposition d’installation, état hors ligne et application d’une mise à jour.
+- `service-worker.js` : cache versionné des fichiers et exclusion du mode API.
 - `tests/engine.test.cjs` : tests automatisés du moteur.
 - `tests/interface.test.cjs` : tests de l’interface et de son lien avec l’API en DOM simulé (sans rendu de navigateur).
+- `tests/pwa.test.cjs` : manifeste, icônes et comportement du cache en environnement simulé.
+- `tests/pwa-browser.cjs` : scénario optionnel dans Edge automatisé avec un profil temporaire, si Playwright et Edge sont disponibles.
 
 Avec Node.js disponible, lancer les tests depuis le dossier du projet :
 
 ```sh
-node --test tests/engine.test.cjs tests/interface.test.cjs
+node --test tests/engine.test.cjs tests/interface.test.cjs tests/pwa.test.cjs
 ```
+
+Le test de navigateur optionnel se lance avec `node tests/pwa-browser.cjs` (Playwright doit être accessible à Node.js et Edge installé). Il sert lui-même un aperçu local sous `/code-secret/`, simule une version suivante uniquement en mémoire, puis ferme le navigateur et le serveur. Il n’utilise pas le profil Edge personnel. Ces outils sont des dépendances de vérification, pas des dépendances du jeu publié.
 
 ## API commune de test
 
@@ -136,11 +161,35 @@ Ce scénario est une procédure à exécuter : sa présence dans le README ne co
 
 - Ajustements de l’interface après les premiers essais de l’étudiant.
 - Validation du confort de la palette sur smartphone.
-- Ajouter la PWA dans une étape distincte, conformément à la nouvelle consigne rapportée par l’étudiant ; périmètre exact de l’installation et du hors-ligne à préciser.
+- Vérifier l’installation native de la PWA avec l’étudiant dans Edge/Windows, puis sur un smartphone ; les fonctionnalités d’installation, de hors-ligne et de mise à jour sont implémentées en version 0.4.
 
 Les décisions prises avec Codex seront expliquées ici au fur et à mesure.
 
 ## Vérifications
+
+### Version 0.4 — PWA (25 novembre 2026)
+
+Périmètre réalisé : installation proposée par le navigateur, icônes planète, jeu normal hors connexion après une première visite et mise à jour sur action du joueur. Aucun changement de `engine.js` ou `script.js`. Version avant modification : `429049f`, 21 tests existants réussis.
+
+Après ajout : **27 tests automatisés Node.js réussis, 0 échec**, dont les 21 tests existants conservés. Six nouveaux tests vérifient le manifeste et les dimensions PNG, le cache complet, l’activation limitée aux caches du projet, le nettoyage d’une installation échouée, le contournement du cache en mode API et l’activation d’une mise à jour sur message explicite.
+
+Des essais réels automatisés ont également été exécutés dans **Microsoft Edge 158.0.4370.33 sur Windows**, avec un profil temporaire distinct du profil de l’étudiant et un serveur local sous `/code-secret/` :
+
+| Scénario | Attendu | Observé |
+| --- | --- | --- |
+| Manifeste et installabilité | Manifeste lisible et pas de blocage signalé par Edge | Conforme ; aucune erreur d’installabilité retournée |
+| Rechargement hors ligne après préparation | Page, styles et palette disponibles ; proposition incomplète refusée sans essai et proposition complète acceptée | Conforme dans Edge |
+| Mode API sans connexion | Aucun ancien mode test servi depuis le cache | Navigation refusée hors ligne, comme prévu |
+| Mode API en ligne après activation du cache | Secret imposé rouge/rouge/bleu/vert, proposition rouge/bleu/rouge/rouge : 1 bien placée, 2 mal placées et un essai visible | Conforme dans Edge |
+| Boutons au clavier | Sélection d’une position avec Entrée puis couleur avec Espace | Conforme dans Edge |
+| Mise à jour simulée 0.4.0 → 0.4.1 | Bandeau sans perte de la saisie ; clic pour recharger ; nouveau cache utilisé hors ligne et ancien cache supprimé | Conforme dans Edge ; simulation en mémoire, pas une version publiée |
+| Fenêtre de 390 × 844 pixels et fenêtre ordinateur | Aucun débordement horizontal sur petit écran, contenu lisible et aucune exception JavaScript | Conforme ; captures inspectées |
+
+Limites : la détection d’installabilité n’est pas une installation native complète. L’installation depuis le bouton puis le lancement depuis l’icône Windows restent **à effectuer par l’étudiant**. Le contrôle sur smartphone réel et le cycle de mise à jour entre deux publications GitHub Pages restent **à vérifier**. Le test de mise à jour ci-dessus utilise un serveur local, pas deux déploiements publics.
+
+**Maintenance :** incrémenter `APP_VERSION` dans `service-worker.js` à chaque changement d’un fichier précaché et actualiser `APP_FILES` si nécessaire. Sans cela, les joueurs ayant déjà le cache pourraient garder les anciens fichiers. Garder le nom `service-worker.js`. La liste ne contient ni README, ni conversations, ni état de partie.
+
+Publication de cette version : à vérifier après envoi sur GitHub ; ne pas confondre les résultats de navigateur local ci-dessus avec une validation du site public.
 
 ### Retour manuel sur l’API — version publiée 0.3 (25 novembre 2026)
 
@@ -285,7 +334,7 @@ Pour une correction, conserver la preuve du défaut avant modification et le ré
 - Le dépôt GitHub est créé et relié au dossier local. La documentation initiale est enregistrée dans le commit `2f6631e` et envoyée sur la branche `main`.
 - GitHub Pages est configuré sur `main` à la racine du dépôt.
 - La conformité complète de l’API dans un navigateur et sur GitHub Pages reste à vérifier.
-- Les essais sur smartphone, au clavier et au tactile restent à effectuer.
+- Le clavier a été vérifié automatiquement dans Edge pour la version 0.4 ; les essais manuels sur smartphone et au tactile restent à effectuer.
 - Aucune correction fonctionnelle avec preuve avant/après n’a encore été documentée ; ne pas en inventer pour le rendu.
 
 ## Jalons
@@ -315,6 +364,6 @@ Les heures exactes de remise sont indiquées sur Cyberlearn.
 
 Le projet ne comporte ni compte utilisateur, paiement, serveur applicatif, classement en ligne, service d’IA intégré ou clé API.
 
-Les extensions restent facultatives. La PWA, facultative dans l’énoncé initial, devient une exigence selon la nouvelle consigne rapportée par l’étudiant le 25 novembre 2026. Elle n’est pas encore implémentée ; le périmètre exact de l’installation et du fonctionnement hors ligne reste à préciser avant cette étape.
+Les extensions restent facultatives. La PWA, facultative dans l’énoncé initial, devient une exigence selon la nouvelle consigne rapportée par l’étudiant le 25 novembre 2026. La version 0.4 l’implémente avec installation, jeu hors ligne après préparation et mise à jour proposée au joueur ; les limites et vérifications restantes sont documentées ci-dessus.
 
 Ne publier dans GitHub aucune conversation, donnée personnelle, clé d’accès ou vidéo de présentation.

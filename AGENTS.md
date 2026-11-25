@@ -31,7 +31,7 @@
 - Conserver la palette commune, la correction par sélection d’une position, l’historique à côté du jeu et les règles en dessous ; sur petit écran, garder l’ordre jeu, historique, règles.
 - Lors d’un changement visuel, préserver les six couleurs du jeu et éviter de modifier `engine.js` sans nécessité fonctionnelle.
 - Garder les noms des couleurs, le repère de position active et des boutons utilisables au clavier.
-- Traiter la PWA dans une étape distincte du design ; son périmètre reste à préciser dans le README.
+- Préserver le manifeste, les icônes planète et le fonctionnement hors ligne de la PWA décrits dans le README.
 
 ## Vérifier les modifications
 
@@ -42,8 +42,18 @@
 - Comparer les résultats de l’API avec l’interface visible lorsque les deux sont concernés.
 - Ne jamais annoncer un test réussi sans preuve d’exécution.
 - Indiquer clairement « non vérifié » lorsqu’une vérification n’a pas été réalisée.
-- Relancer `node --test tests/engine.test.cjs tests/interface.test.cjs` avant publication d’une modification de l’interface ou du moteur.
+- Relancer `node --test tests/engine.test.cjs tests/interface.test.cjs tests/pwa.test.cjs` avant publication d’une modification de l’application.
 - Vérifier la sélection, la correction d’une position, le refus d’une proposition incomplète et un cas valide. Distinguer les tests du moteur, le DOM simulé et les essais réels dans un navigateur.
+- Pour un changement PWA, exécuter aussi `tests/pwa-browser.cjs` si Playwright et Edge sont disponibles ; sinon signaler les scénarios de navigateur non vérifiés.
+
+## Maintenir la PWA
+
+- Incrémenter `APP_VERSION` dans `service-worker.js` à chaque changement d’un fichier précaché, et conserver ce nom de fichier pour permettre les mises à jour.
+- Maintenir `APP_FILES` à jour et conserver les chemins relatifs compatibles avec `/code-secret/`.
+- Ne pas forcer l’activation à l’installation : proposer « Mettre à jour » et prévenir que la partie recommence après rechargement.
+- Garder le cache limité aux fichiers publics de ce jeu ; ne pas y écrire le secret, l’historique ou des données personnelles, et ne pas supprimer les caches d’autres projets.
+- Conserver le mode `?test=1` hors cache : pas d’enregistrement PWA depuis ce mode, requêtes réseau pour la page et ses ressources. Ce mode nécessite une connexion.
+- Vérifier une installation du cache, un rechargement hors connexion, l’API en ligne et une mise à jour avant/après. Distinguer l’installabilité détectée par le navigateur d’une installation native réellement effectuée par l’étudiant.
 
 ## Garder une trace
 

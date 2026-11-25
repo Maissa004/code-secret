@@ -15,6 +15,10 @@ button:focus-visible, summary:focus-visible, a:focus-visible { outline: 3px soli
 .brand { display: flex; align-items: center; gap: 10px; color: var(--ink); font-size: 23px; font-weight: 750; text-decoration: none; }
 .brand-mark { width: 56px; height: 42px; }
 .version, .history-label { color: var(--muted); font-size: 10px; font-weight: 650; letter-spacing: 1.5px; }
+.app-tools { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin-top: 10px; }
+.pwa-status { color: var(--muted); font-size: 11px; margin: 0; }
+.app-update { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 14px; margin-top: 12px; background: white; border: 1px solid var(--line); border-radius: 12px; }
+.app-update p { flex: 1; min-width: 200px; margin: 0; color: var(--ink); font-size: 12px; }
 .intro { text-align: center; padding: 30px 0; }
 .eyebrow { margin: 0 0 8px; color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: 2px; }
 h1 { font-size: clamp(42px, 5.5vw, 66px); font-weight: 750; letter-spacing: -2px; line-height: 1.1; margin: 0 0 10px; }
