@@ -3,23 +3,24 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#173e38">
+  <meta name="theme-color" content="#f5f0fc">
   <title>Code secret — À vous de décoder</title>
   <link rel="stylesheet" href="./style.css">
+  <link rel="icon" type="image/svg+xml" href="./planet.svg">
   <script src="./engine.js" defer></script>
   <script src="./script.js" defer></script>
 </head>
 <body>
   <main class="app">
     <header class="header">
-      <a class="brand" href="./index.html" aria-label="Code secret, accueil"><span class="brand-mark" aria-hidden="true">● ●<br>● ●</span> Atelier de déduction</a>
-      <span class="version">VERSION 0.2</span>
+      <a class="brand" href="./index.html" aria-label="Code secret, accueil"><img class="brand-mark" src="./planet.svg" alt="" width="56" height="42"> Code secret</a>
+      <span class="version">VERSION 0.3</span>
     </header>
 
     <section class="intro" aria-labelledby="title">
       <p class="eyebrow">QUATRE COULEURS. UN MYSTÈRE.</p>
-      <h1 id="title">Code <em>secret.</em></h1>
-      <p>Observez les indices, affinez votre intuition.<br>Vous avez dix essais pour trouver la combinaison.</p>
+      <h1 id="title">Code secret.</h1>
+      <p>Quatre couleurs. Un mystère à résoudre.</p>
     </section>
 
     <div class="layout">
@@ -36,8 +37,11 @@
         <form id="guess-form" novalidate>
           <fieldset id="guess-fields">
             <legend>Votre proposition <span id="selection-count">0 / 4</span></legend>
-            <p class="hint" id="selection-help">Choisissez une couleur pour chaque position. Les répétitions sont possibles.</p>
-            <div class="positions" id="positions"></div>
+            <p class="hint" id="selection-help">Cliquez sur une couleur pour remplir les positions. Pour corriger, sélectionnez une position puis une couleur.</p>
+            <div class="positions" id="positions" role="group" aria-label="Les quatre positions de votre proposition"></div>
+            <p class="active-position" id="active-position" role="status" aria-live="polite">Position 1 sélectionnée</p>
+            <div class="palette" id="palette" role="group" aria-label="Palette des six couleurs"></div>
+            <p class="palette-help">Choisissez une couleur, puis affinez votre proposition.</p>
             <div class="form-actions">
               <button class="primary" type="submit">Valider la proposition <span aria-hidden="true">↗</span></button>
               <button class="text-button" id="clear" type="button">Effacer</button>
@@ -48,9 +52,15 @@
         <button class="restart" id="restart" type="button">↻ &nbsp; Nouvelle partie</button>
       </section>
 
-      <aside class="card guide" aria-labelledby="rules-title">
-        <p class="eyebrow">LE PRINCIPE</p>
-        <h2 id="rules-title">Un peu de logique,<br>beaucoup de déduction.</h2>
+      <section class="card history" aria-labelledby="history-title">
+        <div class="section-heading"><h2 id="history-title">Historique</h2><span class="history-label">VOS DÉDUCTIONS</span></div>
+        <p id="empty-history" class="empty-history">Chaque essai est un indice de plus.<br><span>Votre première proposition apparaîtra ici.</span></p>
+        <ol id="history" class="history-list"></ol>
+      </section>
+    </div>
+
+      <section class="card guide" aria-labelledby="rules-title">
+        <h2 id="rules-title">Comment jouer ?</h2>
         <ol class="rules">
           <li><strong>Composez votre code.</strong><span>Quatre positions, six couleurs. Une même couleur peut apparaître plusieurs fois.</span></li>
           <li><strong>Lisez les deux indices.</strong><span>Ils donnent des nombres, sans révéler les positions concernées.</span></li>
@@ -60,14 +70,7 @@
         <div class="index-key"><span class="index-dot misplaced" aria-hidden="true"></span><div><strong>Mal placée</strong><span>La bonne couleur, à une autre place.</span></div></div>
         <p class="note">Chaque occurrence compte une seule fois : les bien placées d’abord, puis les mal placées restantes.</p>
         <details><summary>Toutes les règles</summary><p>Le code est choisi au hasard parmi rouge, bleu, vert, jaune, orange et violet. Il reste fixe et caché pendant la partie. Une proposition incomplète ou invalide est refusée avec une explication et ne consomme aucun essai. Chaque proposition valide compte pour un essai et reste dans l’historique. Après dix essais sans victoire, la partie est perdue et le code secret est révélé. Après la fin, les propositions sont bloquées. « Nouvelle partie » remet tout à zéro, masque la solution précédente et tire un code au hasard.</p></details>
-      </aside>
-    </div>
-
-    <section class="card history" aria-labelledby="history-title">
-      <div class="section-heading"><h2 id="history-title">Le fil de vos déductions</h2><span class="history-label">HISTORIQUE</span></div>
-      <p id="empty-history" class="empty-history">Chaque essai est un indice de plus.<br><span>Votre première proposition apparaîtra ici.</span></p>
-      <ol id="history" class="history-list"></ol>
-    </section>
+      </section>
     <footer>Code secret <span aria-hidden="true">·</span> Créé pour apprendre, joué pour réfléchir.</footer>
     <noscript><p class="card">Activez JavaScript dans votre navigateur pour jouer.</p></noscript>
   </main>

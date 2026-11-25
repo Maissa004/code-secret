@@ -28,8 +28,7 @@ function loadInterface(search = '?test=1') {
     document: {
       querySelector: selector => { assert.ok(elements[selector], `Élément présent : ${selector}`); return elements[selector]; },
       createElement: () => new Element()
-    },
-    Option: class extends Element { constructor(text, value) { super(); this.textContent = text; this.value = value; } }
+    }
   });
   vm.runInContext(readFileSync(join(__dirname, '../script.js'), 'utf8'), context);
   return { api: window.codeSecretTest, elements };
@@ -75,12 +74,12 @@ test('Affichage : victoire au dixième conservée sans révélation de défaite'
 test('Mode normal : pas d’API, validation incomplète et valide, bouton nouvelle partie', async () => {
   const { api, elements: e } = loadInterface('');
   assert.equal(api, undefined);
-  const selects = e['#positions'].children.map(label => label.children[2]);
-  selects.slice(0,3).forEach(select => { select.value = 'rouge'; });
+  const palette = e['#palette'].children;
+  for (let i=0; i<3; i++) palette[0].listeners.click();
   await e['#guess-form'].listeners.submit({preventDefault() {}});
   assert.equal(e['#attempts'].textContent, '0 / 10 essais');
   assert.equal(e['#history'].children.length, 0);
-  selects[3].value = 'bleu';
+  palette[1].listeners.click();
   await e['#guess-form'].listeners.submit({preventDefault() {}});
   assert.equal(e['#attempts'].textContent, '1 / 10 essais');
   assert.equal(e['#history'].children.length, 1);
@@ -88,4 +87,47 @@ test('Mode normal : pas d’API, validation incomplète et valide, bouton nouvel
   assert.equal(e['#attempts'].textContent, '0 / 10 essais');
   assert.equal(e['#secret-display'].textContent, '????');
   assert.equal(e['#history'].children.length, 0);
+});
+
+test('Palette commune : répétitions, correction ciblée et état API cohérent après validation', async () => {
+  const { api, elements: e } = loadInterface();
+  await api.startGame({secret: ['rouge','rouge','bleu','vert']});
+  const palette = e['#palette'].children;
+  const positions = e['#positions'].children;
+  assert.equal(palette.length, 6);
+  for (const index of [0,0,1,2]) palette[index].listeners.click();
+  assert.equal(e['#selection-count'].textContent, '4 / 4');
+  assert.equal(api.getState().attempts, 0);
+  positions[1].listeners.click();
+  assert.equal(positions[1].attributes['aria-pressed'], 'true');
+  palette[1].listeners.click();
+  assert.deepEqual(positions.map(button => button.children[2].textContent), ['rouge','bleu','bleu','vert']);
+  assert.equal(positions[1].attributes['aria-label'], 'Position 2 : bleu');
+  await e['#guess-form'].listeners.submit({preventDefault() {}});
+  assert.deepEqual(api.getState().lastGuess, ['rouge','bleu','bleu','vert']);
+  assert.deepEqual(api.getState().lastResult, {wellPlaced:3,misplaced:0});
+  assert.equal(e['#history'].children.length, 1);
+  assert.equal(e['#selection-count'].textContent, '0 / 4');
+  assert.equal(positions[0].attributes['aria-pressed'], 'true');
+});
+
+test('Palette : refus conserve la saisie, effacer ne consomme pas d’essai, démarrage API réinitialise', async () => {
+  const { api, elements: e } = loadInterface();
+  const palette = e['#palette'].children;
+  palette[0].listeners.click();
+  assert.equal(e['#selection-count'].textContent, '0 / 4'); // Pas de partie démarrée.
+  await api.startGame({secret: ['rouge','rouge','bleu','vert']});
+  palette[5].listeners.click();
+  await e['#guess-form'].listeners.submit({preventDefault() {}});
+  assert.equal(api.getState().lastError.code, 'invalid-length');
+  assert.equal(e['#positions'].children[0].children[2].textContent, 'violet');
+  assert.equal(api.getState().attempts, 0);
+  e['#clear'].listeners.click();
+  assert.equal(e['#selection-count'].textContent, '0 / 4');
+  assert.equal(api.getState().attempts, 0);
+  palette[2].listeners.click();
+  await assert.rejects(api.startGame({secret: ['rouge']}));
+  assert.equal(e['#selection-count'].textContent, '1 / 4');
+  await api.startGame();
+  assert.equal(e['#selection-count'].textContent, '0 / 4');
 });

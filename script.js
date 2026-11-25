@@ -6,12 +6,15 @@
   const positions = document.querySelector("#positions");
   const history = document.querySelector("#history");
   const message = document.querySelector("#message");
-  const selects = [];
+  const selection = Array(4).fill("");
+  const positionButtons = [];
+  let activePosition = 0;
 
-  // Les listes natives sont utilisables au clavier et sur écran tactile.
+  // Les boutons natifs se commandent aussi avec Tab, Entrée et Espace.
   for (let i = 0; i < 4; i++) {
-    const label = document.createElement("label");
-    label.className = "position";
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "position";
     const title = document.createElement("span");
     title.className = "position-label";
     title.textContent = `POSITION ${i + 1}`;
@@ -19,28 +22,59 @@
     peg.className = "peg";
     peg.textContent = "+";
     peg.setAttribute("aria-hidden", "true");
-    const select = document.createElement("select");
-    select.setAttribute("aria-label", `Couleur en position ${i + 1}`);
-    select.setAttribute("aria-describedby", "selection-help");
-    select.add(new Option("Choisir…", ""));
-    colors.forEach((color) => select.add(new Option(color[0].toUpperCase() + color.slice(1), color)));
-    select.addEventListener("change", updateSelection);
-    selects.push(select);
-    label.append(title, peg, select);
-    positions.append(label);
+    const name = document.createElement("span");
+    name.className = "position-name";
+    button.setAttribute("aria-describedby", "selection-help");
+    button.addEventListener("click", () => {
+      if (game.getState().status !== "playing") return;
+      activePosition = i;
+      updateSelection();
+    });
+    button.append(title, peg, name);
+    positionButtons.push(button);
+    positions.append(button);
   }
 
-  function updateSelection() {
-    selects.forEach((select) => {
-      const peg = select.previousElementSibling;
-      peg.className = `peg ${select.value}`;
-      peg.textContent = select.value ? "" : "+";
+  colors.forEach((color) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "palette-color";
+    button.setAttribute("aria-label", `Choisir ${color}`);
+    const peg = document.createElement("span");
+    peg.className = `peg ${color}`;
+    peg.setAttribute("aria-hidden", "true");
+    const name = document.createElement("span");
+    name.textContent = color[0].toUpperCase() + color.slice(1);
+    button.append(peg, name);
+    button.addEventListener("click", () => {
+      if (game.getState().status !== "playing") return;
+      selection[activePosition] = color;
+      const next = selection.findIndex((value, index) => !value && index > activePosition);
+      const firstEmpty = selection.indexOf("");
+      if (next !== -1) activePosition = next;
+      else if (firstEmpty !== -1) activePosition = firstEmpty;
+      updateSelection();
     });
-    document.querySelector("#selection-count").textContent = `${selects.filter((select) => select.value).length} / 4`;
+    document.querySelector("#palette").append(button);
+  });
+
+  function updateSelection() {
+    positionButtons.forEach((button, index) => {
+      const color = selection[index];
+      const peg = button.children[1];
+      peg.className = `peg ${color}`;
+      peg.textContent = color ? "" : "+";
+      button.children[2].textContent = color || "Vide";
+      button.setAttribute("aria-label", `Position ${index + 1} : ${color || "vide"}`);
+      button.setAttribute("aria-pressed", String(index === activePosition));
+    });
+    document.querySelector("#selection-count").textContent = `${selection.filter(Boolean).length} / 4`;
+    document.querySelector("#active-position").textContent = `Position ${activePosition + 1} sélectionnée`;
   }
 
   function clearSelection() {
-    selects.forEach((select) => { select.value = ""; });
+    selection.fill("");
+    activePosition = 0;
     updateSelection();
   }
 
@@ -132,21 +166,24 @@
 
   document.querySelector("#guess-form").addEventListener("submit", async (event) => {
     event.preventDefault();
-    const values = selects.map((select) => select.value);
+    const values = [...selection];
     if (values.some((value) => !value)) {
       // Le moteur reçoit une proposition incomplète, sans couleur artificielle.
       await submitGuess(values.filter(Boolean));
-      selects.find((select) => !select.value)?.focus();
+      activePosition = selection.indexOf("");
+      updateSelection();
+      positionButtons[activePosition].focus();
       return;
     }
     await submitGuess(values);
-    if (game.getState().status === "playing") selects[0].focus();
+    if (game.getState().status === "playing") positionButtons[0].focus();
     else document.querySelector("#restart").focus();
   });
-  document.querySelector("#clear").addEventListener("click", () => { clearSelection(); selects[0].focus(); });
-  document.querySelector("#restart").addEventListener("click", async () => { await startGame(); selects[0].focus(); });
+  document.querySelector("#clear").addEventListener("click", () => { clearSelection(); positionButtons[0].focus(); });
+  document.querySelector("#restart").addEventListener("click", async () => { await startGame(); positionButtons[0].focus(); });
 
   if (new URLSearchParams(window.location.search).get("test") === "1") {
+    updateSelection();
     render();
     window.codeSecretTest = { version: "0.2", getConfig: game.getConfig, getState: game.getState, startGame, submitGuess };
   } else {

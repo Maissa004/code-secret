@@ -35,7 +35,7 @@ L’annexe du projet fait référence pour les règles. Le contrat 0.2 fait réf
 
 ## Utilisation et accès
 
-État actuel : version 0.2 envoyée sur GitHub, avec révélation du code après une défaite au dixième essai. La version de l’application est distincte de la version du contrat API (0.2).
+État actuel : version locale 0.3, avec palette commune cliquable et nouveau design lilas/violet. La version 0.2 publiée pour `jalon-1` reste identifiable dans Git. La version de l’application est distincte de la version du contrat API (0.2).
 
 - Lancement local : ouvrir `index.html` dans un navigateur (double-clic sur le fichier). Aucune installation ni compilation n’est nécessaire pour jouer.
 - Dépôt GitHub : [Maissa004/code-secret](https://github.com/Maissa004/code-secret).
@@ -43,7 +43,13 @@ L’annexe du projet fait référence pour les règles. Le contrat 0.2 fait réf
 
 GitHub Pages publie la racine de la branche `main`. Les prochains envois sur cette branche déclencheront la mise à jour du site. Le tag `jalon-1` identifie la version de remise de J1 ; il n’est pas déplacé lors des modifications suivantes.
 
-L’interface affiche les règles, les essais et les indices. Les noms accompagnent les couleurs. Les sélecteurs natifs sont prévus pour le clavier et le tactile ; leur utilisation réelle reste à vérifier dans les navigateurs ciblés.
+L’interface affiche les règles, les essais et les indices. Les noms accompagnent les couleurs. Pour jouer :
+
+1. Cliquer sur les couleurs de la palette commune : elles remplissent les positions vides de gauche à droite.
+2. Pour corriger une position, cliquer sur cette position puis sur une couleur. La position active est entourée et indiquée par un texte.
+3. Cliquer sur « Valider la proposition ». « Effacer » vide les quatre positions sans consommer d’essai.
+
+Les boutons natifs s’utilisent aussi avec Tab, puis Entrée ou Espace. Sur ordinateur, l’historique est à droite du jeu et les règles en dessous. Sur petit écran, l’ordre est jeu, historique, règles. Le rendu et le confort sur appareils réels restent à vérifier pour cette version.
 
 ### Organisation des fichiers
 
@@ -51,6 +57,7 @@ L’interface affiche les règles, les essais et les indices. Les noms accompagn
 - `style.css` : apparence et adaptation à la largeur de l’écran.
 - `engine.js` : règles, validation, calcul des indices et état de la partie.
 - `script.js` : sélection des couleurs, affichage et API de test.
+- `planet.svg` : petit logo de planète bleue avec anneau, utilisé aussi comme icône d’onglet.
 - `tests/engine.test.cjs` : tests automatisés du moteur.
 - `tests/interface.test.cjs` : tests de l’interface et de son lien avec l’API en DOM simulé (sans rendu de navigateur).
 
@@ -119,18 +126,40 @@ Ce scénario est une procédure à exécuter : sa présence dans le README ne co
 - Conserver une documentation courte et actualisée.
 - Utiliser HTML, CSS et JavaScript sans framework : aucune compilation n’est nécessaire et les fichiers restent faciles à lire.
 - Séparer le moteur de l’affichage pour vérifier les règles indépendamment et partager une seule partie avec l’API.
-- Choisir quatre listes de couleurs avec des noms visibles, plutôt que des commandes reposant uniquement sur la couleur.
-- Adopter une première apparence crème et vert, avec une disposition sur une colonne sur petit écran.
+- À partir de la version 0.3, remplacer les quatre listes par une palette commune de six boutons colorés avec leurs noms : moins de répétitions visuelles et une sélection directe. La position à modifier reste explicite et accessible au clavier.
+- Appliquer la première maquette choisie par l’étudiant : fond lilas pastel, textes et boutons violets, cartes blanches et planète bleue. Conserver exactement les six couleurs du jeu. Les maquettes rose et violet lavande n’ont pas été retenues.
+- Placer l’historique à côté du jeu et les règles en bas, avec une seule colonne sur petit écran.
 - Afficher automatiquement la solution uniquement après une défaite au dixième essai, selon l’accord du professeur rapporté par l’étudiant le 18 novembre 2026. Les indices, les dix essais et la priorité à la victoire restent inchangés.
 
 ### Choix encore ouverts
 
 - Ajustements de l’interface après les premiers essais de l’étudiant.
-- Validation du confort des sélecteurs sur smartphone.
+- Validation du confort de la palette sur smartphone.
+- Ajouter la PWA dans une étape distincte, conformément à la nouvelle consigne rapportée par l’étudiant ; périmètre exact de l’installation et du hors-ligne à préciser.
 
 Les décisions prises avec Codex seront expliquées ici au fur et à mesure.
 
 ## Vérifications
+
+### Version 0.3 — design et palette commune (25 novembre 2026)
+
+Changement d’interface demandé après validation d’une maquette. Le moteur `engine.js`, le calcul des indices, la limite de dix essais et les méthodes de l’API ne sont pas modifiés. Le tag `jalon-1` est conservé.
+
+- Avant modification : **19 tests réussis, 0 échec**, sur le code `dc12ee8`.
+- Après modification : **21 tests réussis, 0 échec**, avec Node.js. Les 16 tests du moteur sont conservés sans changement. Le test de saisie de l’interface utilise désormais les pastilles au lieu des listes. Deux nouveaux tests portent sur la sélection commune et la correction d’une position.
+
+| Vérification automatisée | Résultat attendu | Résultat observé |
+| --- | --- | --- |
+| Remplir les positions avec la palette, y compris une couleur répétée | Quatre couleurs ordonnées, aucun essai avant validation | Conforme en DOM simulé |
+| Cliquer sur une position remplie puis choisir une autre couleur | Seule la position choisie change ; sélection et nom accessibles mis à jour | Conforme en DOM simulé |
+| Valider trois couleurs | Refus, saisie conservée, compteur et historique inchangés | Conforme en DOM simulé |
+| Valider quatre couleurs | Proposition identique dans l’API et l’historique, un seul essai et sélection remise à zéro | Conforme en DOM simulé |
+| Effacer, démarrer ou redémarrer via l’API | Effacement sans essai ; nouveau départ avec sélection vide ; démarrage invalide sans altérer la saisie | Conforme en DOM simulé |
+| Indices, répétitions, victoire au dixième, défaite et révélation | Comportements conservés | Tests existants réussis |
+
+Limite : l’outil de navigateur n’a pas pu démarrer dans cette session. Le rendu ordinateur/téléphone, les clics réels et le parcours au clavier de la version 0.3 restent **non vérifiés dans un navigateur**. Les tests en DOM simulé ne les remplacent pas. L’aperçu à contrôler est local ; cette modification ne publie pas automatiquement la nouvelle version sur GitHub Pages.
+
+Essai manuel prévu : ouvrir `index.html`, choisir trois pastilles puis valider (refus sans essai), ajouter la quatrième (un essai), corriger une position avant une autre validation, puis utiliser « Nouvelle partie ». Refaire la sélection avec Tab et Entrée/Espace, et vérifier la disposition sur téléphone. Rejouer le scénario API à code imposé décrit ci-dessous pour contrôler le résultat 1 bien placée / 2 mal placées. Résultats de ces nouveaux essais manuels : **à renseigner**.
 
 ### Version 0.2 — révélation après défaite (18 novembre 2026)
 
