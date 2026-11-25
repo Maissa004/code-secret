@@ -146,7 +146,7 @@ Les décisions prises avec Codex seront expliquées ici au fur et à mesure.
 
 L’étudiant rapporte que les scénarios API proposés dans la conversation semblent fonctionner avec le nouveau design. Version visée : application 0.3 publiée depuis `main` (code du design `9216766`, dernière publication documentée `7140176`, qui ne change que la documentation). URL utilisée pour les essais proposés : [mode test API](https://maissa004.github.io/code-secret/?test=1).
 
-Type : **tests manuels rapportés par l’étudiant**, sans nouvelle exécution par Codex. Le navigateur, sa version, l’appareil et les valeurs détaillées retournées par la console ne sont pas renseignés. La confirmation est globale, pas un relevé individuel de chaque commande.
+Type : **tests manuels rapportés par l’étudiant**, sans nouvelle exécution par Codex. Environnement confirmé par l’étudiant : **Microsoft Edge sur un ordinateur Windows**. Les versions exactes d’Edge et de Windows ainsi que les valeurs détaillées retournées par la console ne sont pas renseignées. La confirmation est globale, pas un relevé individuel de chaque commande.
 
 | Scénario proposé | Résultat attendu | Résultat observé rapporté | Statut |
 | --- | --- | --- | --- |
