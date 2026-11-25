@@ -25,6 +25,14 @@
 - Prévoir une interface utilisable au clavier, au tactile et sur petit écran.
 - Identifier les couleurs également par un nom ou un symbole.
 
+## Préserver l’interface validée
+
+- Suivre les choix visuels du README : fond lilas pastel, textes violets, cartes blanches et planète bleue.
+- Conserver la palette commune, la correction par sélection d’une position, l’historique à côté du jeu et les règles en dessous ; sur petit écran, garder l’ordre jeu, historique, règles.
+- Lors d’un changement visuel, préserver les six couleurs du jeu et éviter de modifier `engine.js` sans nécessité fonctionnelle.
+- Garder les noms des couleurs, le repère de position active et des boutons utilisables au clavier.
+- Traiter la PWA dans une étape distincte du design ; son périmètre reste à préciser dans le README.
+
 ## Vérifier les modifications
 
 - Définir le résultat attendu avant d’exécuter une vérification.
@@ -34,6 +42,8 @@
 - Comparer les résultats de l’API avec l’interface visible lorsque les deux sont concernés.
 - Ne jamais annoncer un test réussi sans preuve d’exécution.
 - Indiquer clairement « non vérifié » lorsqu’une vérification n’a pas été réalisée.
+- Relancer `node --test tests/engine.test.cjs tests/interface.test.cjs` avant publication d’une modification de l’interface ou du moteur.
+- Vérifier la sélection, la correction d’une position, le refus d’une proposition incomplète et un cas valide. Distinguer les tests du moteur, le DOM simulé et les essais réels dans un navigateur.
 
 ## Garder une trace
 
@@ -51,6 +61,8 @@
 - Utiliser des messages de commit courts et explicites.
 - Si le commit est impossible, expliquer ce qui le bloque.
 - Créer les tags de remise uniquement lorsque la version correspondante est prête.
+- Conserver le tag `jalon-1` sur sa version de remise ; les changements suivants se font sur `main` sans déplacer ce tag.
+- Distinguer le commit local, l’envoi sur GitHub et le déploiement GitHub Pages. Après un envoi destiné à publier, vérifier les fichiers servis à l’URL publique et signaler les contrôles de navigateur non réalisés.
 
 ## Protéger le contenu du dépôt
 
