@@ -35,7 +35,7 @@ L’annexe du projet fait référence pour les règles. Le contrat 0.2 fait réf
 
 ## Utilisation et accès
 
-État actuel : version 0.3, avec palette commune cliquable et nouveau design lilas/violet, préparée pour publication le 25 novembre 2026. Le code du design est enregistré dans le commit `9216766`. La version 0.2 publiée pour `jalon-1` reste identifiable dans Git. La version de l’application est distincte de la version du contrat API (0.2).
+État actuel : version 0.3 publiée sur GitHub Pages le 25 novembre 2026, avec palette commune cliquable et nouveau design lilas/violet. Le code du design est enregistré dans le commit `9216766`. La version 0.2 publiée pour `jalon-1` reste identifiable dans Git. La version de l’application est distincte de la version du contrat API (0.2).
 
 - Lancement local : ouvrir `index.html` dans un navigateur (double-clic sur le fichier). Aucune installation ni compilation n’est nécessaire pour jouer.
 - Dépôt GitHub : [Maissa004/code-secret](https://github.com/Maissa004/code-secret).
@@ -166,7 +166,9 @@ Limite : l’outil de navigateur n’a pas pu démarrer lors de la réalisation 
 
 - Publication demandée par l’étudiant après validation de l’apparence locale.
 - Documentation actualisée : accès au mode API, choix du design et consignes durables dans `AGENTS.md`.
-- Avant publication, les **21 tests automatisés ont été relancés avec succès (0 échec)** sur le code `9216766`, avec Node.js. Le contrôle des fichiers servis sera consigné après exécution.
+- Avant publication, les **21 tests automatisés ont été relancés avec succès (0 échec)** sur le code `9216766`, avec Node.js.
+- Le [déploiement du commit `ff0d895`](https://github.com/Maissa004/code-secret/actions/runs/45681673787) s’est terminé avec succès. Les cinq fichiers publics (`index.html`, `style.css`, `script.js`, `engine.js`, `planet.svg`) répondent en HTTP 200 et leur contenu correspond aux fichiers locaux, après normalisation des fins de ligne Windows et du marqueur UTF-8. La page publiée affiche `VERSION 0.3`.
+- L’URL `https://maissa004.github.io/code-secret/?test=1` répond en HTTP 200. Ce contrôle HTTP ne vérifie pas l’exécution de l’API ni les interactions dans un navigateur. Les limites de validation manuelle décrites ci-dessus restent applicables.
 - Le tag `jalon-1` reste sur la version de remise et n’est pas déplacé.
 
 Essai manuel prévu : ouvrir `index.html`, choisir trois pastilles puis valider (refus sans essai), ajouter la quatrième (un essai), corriger une position avant une autre validation, puis utiliser « Nouvelle partie ». Refaire la sélection avec Tab et Entrée/Espace, et vérifier la disposition sur téléphone. Rejouer le scénario API à code imposé décrit ci-dessous pour contrôler le résultat 1 bien placée / 2 mal placées. Résultats de ces nouveaux essais manuels : **à renseigner**.
